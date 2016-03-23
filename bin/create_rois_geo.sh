@@ -17,8 +17,12 @@ do
 
 echo $c
 
-done>vertices
-
+done>$sub/vertices/vertices
+(
+cd $sub/vertices
+split vertices source
+)
 mkdir ${sub}/rois
 
-${pth}wb_command -surface-geodesic-rois ${l_surf} $limit  vertices ${sub}/rois
+i=sourceaa
+${pth}wb_command -surface-geodesic-rois ${l_surf} $limit  $sub/vertices/$i ${sub}/rois/${i}.func.gii
