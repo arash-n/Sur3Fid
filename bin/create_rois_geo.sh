@@ -4,25 +4,47 @@ pth=/Applications/workbench/bin_macosx64/
 sub=$1
 limit=$2
 
-
-l_surf=${sub}/T1w/Native/${sub}.L.midthickness.native.surf.gii
-r_surf=${sub}/T1w/Native/${sub}.R.midthickness.native.surf.gii
-
-
-num_vert=`${pth}wb_command -file-information ${l_surf}|grep "Number of Vertices"|awk '{print $4}'`
-
+mkdir $sub/rois
 mkdir $sub/vertices
+mkdir $sub/vars
+
+
+hemi=L
+
+surf=${sub}/MNINonLinear/Native/${sub}.${hemi}.midthickness.native.surf.gii
+
+mkdir ${sub}/rois/${hemi}
+mkdir ${sub}/vertices/${hemi}
+mkdir $sub/vars/${hemi}
+
+num_vert=`${pth}wb_command -file-information ${surf}|grep "Number of Vertices"|awk '{print $4}'`
+
 for (( c=0; c<$num_vert; c++ ))
 do
 
 echo $c
 
-done>$sub/vertices/vertices
+done>$sub/vertices/${hemi}/vertices
 (
-cd $sub/vertices
+cd $sub/vertices/$hemi
 split vertices source
 )
-mkdir ${sub}/rois
 
-i=sourceaa
-${pth}wb_command -surface-geodesic-rois ${l_surf} $limit  $sub/vertices/$i ${sub}/rois/${i}.func.gii
+${pth}wb_command -metric-math 'y>0' $sub/rois/$hemi/mask.func.gii -var y ${sub}/MNINonLinear/Native/${sub}.L.MyelinMap.native.func.gii
+
+for a in ${sub}/vertices/${hemi}/source??
+
+do
+
+i=`basename $a`
+
+${pth}wb_command -surface-geodesic-rois ${surf} $limit  $sub/vertices/$hemi/$i ${sub}/rois/$hemi/${i}.func.gii
+
+${pth}wb_command -metric-math 'x*y' $sub/rois/$hemi/${i}_myelin.func.gii -var x ${sub}/rois/$hemi/${i}.func.gii -var y ${sub}/MNINonLinear/Native/${sub}.L.MyelinMap.native.func.gii -repeat
+
+${pth}wb_command -metric-math 'x*y' ${sub}/rois/$hemi/c_${i}.func.gii -var x ${sub}/rois/$hemi/${i}.func.gii -var y $sub/rois/$hemi/mask.func.gii -repeat
+
+${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce STDEV -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>$sub/vars/${hemi}/${i}_std>>STD.txt
+${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce MEAN -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>$sub/vars/${hemi}/${i}_mean>>MEAN.txt
+
+done
