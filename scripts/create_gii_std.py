@@ -1,9 +1,28 @@
-import os, sys, copy
+#!/usr/bin/env python
+import os, glob
 import numpy as np
 import nibabel as nib
-import epitome as epi
 import nibabel.gifti.giftiio
-import epitome.commands as cmd
+import argparse
+from subprocess import check_output
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-s", "--sub", type=str, required=True)
+parser.add_argument("-d", "--dir", type=str, default="./")
+
+args = parser.parse_args()
+
+subject=args.sub
+dir=args.dir
+
+os.chdir(args.dir)
+
+print("\n")
+print ("Current Directory:")
+print(os.getcwd() + "\n")
+print ("Current Subject:")
+print (subject)
+
 
 def load_gii_data(filename, intent='NIFTI_INTENT_NORMAL'):
     """
@@ -27,25 +46,30 @@ def load_gii_data(filename, intent='NIFTI_INTENT_NORMAL'):
         for DA in range(1,numDA):
             data = np.vstack((data, surf_dist_nib.getArraysFromIntent(intent)[DA].data))
 
-## transpose the data so that it is vertices by TR
-data = np.transpose(data)
+hemi="L"
+
+print("\n")
+print (hemi+" Hemisphere")
+print("\n")
+
+os.chdir(dir+"/"+subject+"/rois/"+hemi)
+
+for file in glob.glob("c_source*.func.gii"):
     
-    ## if the output is one dimensional, make it 2D
-    if len(data.shape) == 1:
-        data = data.reshape(data.shape[0],1)
-    
-    return data
+    surf_dist_nib = nibabel.gifti.giftiio.read(filename)
+    numDA=surf_dist_nib.numDA
+    data=load_gii_data(file)
+    print(file+": "+ str(numDA))
+    vertices=np.sum(data,axis=0)
+    ver=" ".join (map(str,vertices))
+    print(str(ver))
 
-data = load_gii_data(func)
-seed = load_gii_data(seed)
 
-# init output vector
-rois = np.unique(seed)[1:]
-out_data = np.zeros((len(rois), data.shape[1]))
 
-# get mean seed dataistic from each, append to output
-for i, roi in enumerate(rois):
-    idx = np.where(seed == roi)[0]
-        out_data[i,:] = np.mean(data[idx, :], axis=0)
 
-np.savetxt(outputcsv, out_data, delimiter=",")
+
+
+
+
+
+
