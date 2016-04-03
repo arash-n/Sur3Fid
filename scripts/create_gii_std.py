@@ -46,23 +46,28 @@ def load_gii_data(filename, intent='NIFTI_INTENT_NORMAL'):
         for DA in range(1,numDA):
             data = np.vstack((data, surf_dist_nib.getArraysFromIntent(intent)[DA].data))
 
+    return data
+
 hemi="L"
+
 
 print("\n")
 print (hemi+" Hemisphere")
 print("\n")
 
 os.chdir(dir+"/"+subject+"/rois/"+hemi)
-
+vertex_list=[]
 for file in glob.glob("c_source*.func.gii"):
-    
-    surf_dist_nib = nibabel.gifti.giftiio.read(filename)
-    numDA=surf_dist_nib.numDA
     data=load_gii_data(file)
-    print(file+": "+ str(numDA))
     vertices=np.sum(data,axis=0)
-    ver=" ".join (map(str,vertices))
-    print(str(ver))
+    vertex_list.append(vertices)
+    print(vertex_list)
+    del data
+
+vertex_array=np.array(vertex_list)
+vertex_vector=np.reshape(vertex_list,[len(vertex_array).shape[0]*len(vertex_array).shape[1],1])
+    
+
 
 
 

@@ -9,7 +9,8 @@ mkdir $sub/vertices
 mkdir $sub/vars
 
 
-hemi=L
+for hemi in L R
+do
 
 surf=${sub}/MNINonLinear/Native/${sub}.${hemi}.midthickness.native.surf.gii
 
@@ -44,8 +45,18 @@ ${pth}wb_command -metric-math 'x*y' $sub/rois/$hemi/${i}_myelin.func.gii -var x 
 
 ${pth}wb_command -metric-math 'x*y' ${sub}/rois/$hemi/c_${i}.func.gii -var x ${sub}/rois/$hemi/${i}.func.gii -var y $sub/rois/$hemi/mask.func.gii -repeat
 
-${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce COUNT_NONZERO -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>NONzero.txt
-${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce MEAN -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>MEAN.txt
-${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce STDEV -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>STD.txt
+${pth}wb_command -metric-stats  ${sub}/rois/$hemi/c_${i}.func.gii  -reduce COUNT_NONZERO>>$sub/vars/${hemi}/${i}_NONzero.txt
+${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce MEAN -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>$sub/vars/${hemi}/${i}_MEAN.txt
+${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce STDEV -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>$sub/vars/${hemi}/${i}_STD.txt
+
+done
+
+(
+cd $sub/vars/${hemi}
+
+cat s*STD*txt>../${hemi}_STD.txt
+cat s*MEAN*txt>../${hemi}_MEAN.txt
+cat s*NONzero*txt>../${hemi}_NONzero.txt
+)
 
 done
