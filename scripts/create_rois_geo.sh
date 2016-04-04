@@ -45,11 +45,11 @@ ${pth}wb_command -metric-math 'x*y' $sub/rois/$hemi/${i}_myelin.func.gii -var x 
 
 ${pth}wb_command -metric-math 'x*y' ${sub}/rois/$hemi/c_${i}.func.gii -var x ${sub}/rois/$hemi/${i}.func.gii -var y $sub/rois/$hemi/mask.func.gii -repeat
 
-${pth}wb_command -metric-stats  ${sub}/rois/$hemi/c_${i}.func.gii  -reduce COUNT_NONZERO>>$sub/vars/${hemi}/${i}_NONzero.txt
-${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce MEAN -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>$sub/vars/${hemi}/${i}_MEAN.txt
-${pth}wb_command -metric-stats $sub/rois/$hemi/${i}_myelin.func.gii -reduce STDEV -roi ${sub}/rois/$hemi/c_${i}.func.gii -match-maps>>$sub/vars/${hemi}/${i}_STD.txt
+${pth}wb_command -metric-stats  ${sub}/rois/$hemi/c_${i}.func.gii  -reduce COUNT_NONZERO>>$sub/vars/${hemi}/NONzero.txt
 
 done
+
+while read line
 
 (
 cd $sub/vars/${hemi}
