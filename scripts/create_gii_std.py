@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--sub", type=str, required=True)
 parser.add_argument("-d", "--dir", type=str, default="./")
 
+
 args = parser.parse_args()
 
 subject=args.sub
@@ -56,16 +57,29 @@ print (hemi+" Hemisphere")
 print("\n")
 
 os.chdir(dir+"/"+subject+"/rois/"+hemi)
-vertex_list=[]
-for file in glob.glob("c_source*.func.gii"):
+n_vertex=[]
+std_myelin_out=[]
+mean_myelin_out=[]
+
+for file in glob.glob("c_source*_myelin.func.gii"):
     data=load_gii_data(file)
-    vertices=np.sum(data,axis=0)
-    vertex_list.append(vertices)
-    print(vertex_list)
+    data[data==0]=np.nan
+    
+    vertices=np.nansum(data,axis=1)
+    n_vertex.append(vertices)
+    
+    std_myelin=np.nanstd(data,axis=1)
+    std_myelin_out=std_myelin_out.append(std_myelin)
+    
+    mean_myelin=np.nanmean(data,axis=1)
+    mean_myelin_out=mean_myelin_out.append(mean_myelin)
+    
     del data
 
-vertex_array=np.array(vertex_list)
-vertex_vector=np.reshape(vertex_list,[len(vertex_array).shape[0]*len(vertex_array).shape[1],1])
+print(n_vertex)
+
+#vertex_array=np.array(n_vertex)
+#vertex_vector=np.reshape(vertex_list,[len(vertex_array).shape[0]*len(vertex_array).shape[1],1])
     
 
 
