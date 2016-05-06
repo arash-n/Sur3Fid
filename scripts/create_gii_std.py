@@ -16,7 +16,7 @@ args = parser.parse_args()
 subject=args.sub
 dir=args.dir
 
-os.chdir(args.dir)
+os.chdir(dir)
 
 print("\n")
 print ("Current Subject:")
@@ -56,25 +56,26 @@ print("\n")
 print (hemi+" Hemisphere")
 print("\n")
 print ("Current Directory:")
+os.chdir(dir+"/"+subject+"/rois/"+hemi)
 print(os.getcwd() + "\n")
 
-os.chdir(dir+"/"+subject+"/rois/"+hemi)
-n_vertex=[]
-std_myelin_out=[]
-mean_myelin_out=[]
+n_vertex=np.empty(0)
+std_myelin_out=np.empty(0)
+mean_myelin_out=np.empty(0)
+
 i=0
 for file in glob.glob("source*_myelin.func.gii"):
     data=load_gii_data(file)
     data[data==0]=np.nan
     
     vertices=np.nansum(data,axis=1)
-    n_vertex.append(vertices)
+    n_vertex=np.append(n_vertex,vertices)
     
     std_myelin=np.nanstd(data,axis=1)
-    std_myelin_out=std_myelin_out.append(std_myelin)
+    std_myelin_out=np.append(std_myelin_out,std_myelin)
     
     mean_myelin=np.nanmean(data,axis=1)
-    mean_myelin_out=mean_myelin_out.append(mean_myelin)
+    mean_myelin_out=np.append(mean_myelin_out,mean_myelin)
     
     i=i+1
     print(i)
