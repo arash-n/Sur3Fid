@@ -64,7 +64,9 @@ std_myelin_out=np.empty(0)
 mean_myelin_out=np.empty(0)
 
 i=0
-for file in glob.glob("source*_myelin.func.gii"):
+for file in sorted(glob.glob("source*_myelin.func.gii")):
+    print "Current File Being Processed is: " file
+
     data=load_gii_data(file)
     data[data==0]=np.nan
     
@@ -79,6 +81,7 @@ for file in glob.glob("source*_myelin.func.gii"):
     
     i=i+1
     print(i)
+    print(std_myelin_out.shape)
     del data
 
 print("Writing Files...")
