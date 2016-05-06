@@ -19,8 +19,6 @@ dir=args.dir
 os.chdir(args.dir)
 
 print("\n")
-print ("Current Directory:")
-print(os.getcwd() + "\n")
 print ("Current Subject:")
 print (subject)
 
@@ -57,13 +55,15 @@ hemi="L"
 print("\n")
 print (hemi+" Hemisphere")
 print("\n")
+print ("Current Directory:")
+print(os.getcwd() + "\n")
 
 os.chdir(dir+"/"+subject+"/rois/"+hemi)
 n_vertex=[]
 std_myelin_out=[]
 mean_myelin_out=[]
 i=0
-for file in glob.glob("c_source*_myelin.func.gii"):
+for file in glob.glob("source*_myelin.func.gii"):
     data=load_gii_data(file)
     data[data==0]=np.nan
     
@@ -83,7 +83,7 @@ for file in glob.glob("c_source*_myelin.func.gii"):
 print("Writing Files...")
 
 image=nibabel.gifti.giftiio.read(subject+"."+hemi+".MyelinMap.native.func.gii")
-int='NIFTI_INTENT_NORMAL'
+intent='NIFTI_INTENT_NORMAL'
 
 image.getArraysFromIntent(intent)[0].data=n_vertex
 nibabel.gifti.giftiio.write(image,subject+"."+hemi+".n_vertex.native.func.gii")
@@ -93,10 +93,3 @@ nibabel.gifti.giftiio.write(image,subject+"."+hemi+".std_myelin.native.func.gii"
 
 image.getArraysFromIntent(intent)[0].data=mean_myelin_out
 nibabel.gifti.giftiio.write(image,subject+"."+hemi+".mean_myelin.native.func.gii")
-
-
-
-
-
-
-
