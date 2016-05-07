@@ -86,14 +86,22 @@ for file in sorted(glob.glob("source*_myelin.func.gii")):
 
 print("Writing Files...")
 
-image=nibabel.gifti.giftiio.read(subject+"."+hemi+".MyelinMap.native.func.gii")
-intent='NIFTI_INTENT_NORMAL'
+myl=nibabel.gifti.giftiio.read(subject+"."+hemi+".MyelinMap.native.func.gii")
 
-image.getArraysFromIntent(intent)[0].data=n_vertex
-nibabel.gifti.giftiio.write(image,subject+"."+hemi+".n_vertex.native.func.gii")
+newimg=nibabel.gifti.GiftiImage()
+darray=std_myelin_out
+newimg.add_gifti_data_array(nibabel.gifti.GiftiDataArray.from_array(darray,
+intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
+nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".std_myelin.native.func.gii")
 
-image.getArraysFromIntent(intent)[0].data=std_myelin_out
-nibabel.gifti.giftiio.write(image,subject+"."+hemi+".std_myelin.native.func.gii")
+newimg=nibabel.gifti.GiftiImage()
+darray=n_vertex
+newimg.add_gifti_data_array(nibabel.gifti.GiftiDataArray.from_array(darray,
+intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
+nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".n_vertex.native.func.gii")
 
-image.getArraysFromIntent(intent)[0].data=mean_myelin_out
-nibabel.gifti.giftiio.write(image,subject+"."+hemi+".mean_myelin.native.func.gii")
+newimg=nibabel.gifti.GiftiImage()
+darray=mean_myelin_out
+newimg.add_gifti_data_array(nibabel.gifti.GiftiDataArray.from_array(darray,
+intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
+nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".n_vertex.native.func.gii")
