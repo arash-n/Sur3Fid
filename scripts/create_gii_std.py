@@ -93,15 +93,19 @@ darray=std_myelin_out
 newimg.add_gifti_data_array(nib.gifti.GiftiDataArray.from_array(darray,
 intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
 nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".std_myelin.native.func.gii")
+np.savetxt(subject+"."+hemi+".std_myelin.txt", darray)
 
 newimg=nib.gifti.GiftiImage()
 darray=n_vertex
 newimg.add_gifti_data_array(nib.gifti.GiftiDataArray.from_array(darray,
 intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
 nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".n_vertex.native.func.gii")
+np.savetxt(darray,subject+"."+hemi+".n_vertex.txt", darray)
 
 newimg=nib.gifti.GiftiImage()
 darray=mean_myelin_out
 newimg.add_gifti_data_array(nib.gifti.GiftiDataArray.from_array(darray,
 intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
-nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".n_vertex.native.func.gii")
+nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".mean_myelin.native.func.gii")
+np.savetxt(subject+"."+hemi+".std_myelin.txt", darray)
+
