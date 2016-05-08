@@ -100,7 +100,7 @@ darray=n_vertex
 newimg.add_gifti_data_array(nib.gifti.GiftiDataArray.from_array(darray,
 intent=myl.darrays[0].intent,datatype=myl.darrays[0].datatype,ordering='F'))
 nibabel.gifti.giftiio.write(newimg,subject+"."+hemi+".n_vertex.native.func.gii")
-np.savetxt(darray,subject+"."+hemi+".n_vertex.txt", darray)
+np.savetxt(subject+"."+hemi+".n_vertex.txt", darray)
 
 newimg=nib.gifti.GiftiImage()
 darray=mean_myelin_out
